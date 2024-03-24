@@ -42,9 +42,13 @@ services:
 
 volumes: 
   gitlab-config:
+    external: true
   gitlab-logs:
+    external: true
   gitlab-data:
+    external: true
   gitlab-runner-config:
+    external: true
 
 networks:
   gitlab-network:
