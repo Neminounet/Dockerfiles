@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    container_name: 'gitlab'
+    restart: always
+    hostname: "localhost"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '9999:80'
+      - '443:443'
+      - '2224:22'
+    volumes:
+      - type: volume
+        source: gitlab-config
+        target: /etc/gitlab
+      - type: volume
+        source: gitlab-logs
+        target: /var/log/gitlab
+      - type: volume
+        source: gitlab-data
+        target: /var/opt/gitlab
+volumes: 
+  gitlab-config:
+    external: true
+  gitlab-logs:
+    external: true
+  gitlab-data:
+    external: true
+    

@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  vm1: 
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vm1
+    tty: true
+    stdin_open: true
+    networks:
+      - multi_vm_net
+    restart: always
+    hostname: vm1
+    ports:
+      - "2232:22"
+  vm2: 
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vm2
+    tty: true
+    stdin_open: true
+    networks:
+      - multi_vm_net
+    restart: always
+    hostname: vm2
+    ports:
+      - "2233:22"
+  vm3:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vm3
+    tty: true
+    stdin_open: true
+    networks:
+      - multi_vm_net
+    restart: always
+    hostname: vm3
+    ports:
+      - "2234:22"
+networks:
+  multi_vm_net:
+   

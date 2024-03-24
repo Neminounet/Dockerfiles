@@ -1,0 +1,28 @@
+1. Création des volumes gitlab : 
+===========================
+=> docker volume create gitlab-config 
+=> docker volume create gitlab-logs 
+=> docker volume create gitlab-data
+=> cd Gitlab_plus_runner 
+=> docker compose up --build
+=> docker compose up -d --build (Utilisation en mode détaché)
+
+2. Première utilisation gitlab :
+=====================================
+=> docker container exec -it gitlab sh
+=> cd etc/gitlab 
+=> cat initial_root_password 
+**  Récupérer => password
+** Dans navigateur => http://localhost:9999
+** Nom d'utilisateur : root 
+** Mot de passe : (password récupéré plus tôt) 
+** Préférences => password => current password (identique au précédent) => New password (votre mdp) + répétition
+** Préférences => SSH Keys => Add new Key
+=> cd ~/.ssh 
+=> cat id_rsa.pub 
+** copier la Clé publique obtenue dans le Champ "Key" de Gitlab => Supprimer la date d'expiration => enregistrer
+
+3. Créer un projet :
+======================
+** Projects => Create a project
+** Create blank project
