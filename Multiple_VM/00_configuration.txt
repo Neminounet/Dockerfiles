@@ -1,17 +1,24 @@
 .0 Clé SSH pour les containers VM :
 ===================================
+** Créer une clé SSH pour ces 3 VM 
+=> ssh-keygen -t rsa -b 4096
+** vm_test_id_rsa / vm_test_id_rsa.pub 
+** passphrase : lalala
 ** Copier la clé publique dans le dossier du Dockerfile (Ne peut pas build en allant chercher dans ~/.ssh, uniquemment dans le dossier courant .)
-=> cp ~/.ssh/id_rsa.pub ~/Documents/Dockerfiles/Multiple_VM/
+=> cp ~/.ssh/vm_test_id_rsa.pub ~/Documents/Dockerfiles/Multiple_VM/
 
 
-.1 Créer les VM :
+.1 Créer les VM / Eteindre supprimer les VM:
 ========================
 => docker compose up -d --build
+=> docker compose down
 
 
 2. Accéder aux VM après en SSH :
 =================================
 ** ssh -i chemin/vers/votre/clé_privée -p PORT_MAPPÉ root@adresse_hôte 
-=> ssh -i ~/.ssh/id_rsa -p 2232 root@localhost
-=> ssh -i ~/.ssh/id_rsa -p 2233 root@localhost
-=> ssh -i ~/.ssh/id_rsa -p 2234 root@localhost
+=> ssh -i ~/.ssh/vm_test_id_rsa -p 2232 root@localhost
+=> ssh -i ~/.ssh/vm_test_id_rsa -p 2233 root@localhost
+=> ssh -i ~/.ssh/vm_test_id_rsa -p 2234 root@localhost
+
+

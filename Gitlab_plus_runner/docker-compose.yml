@@ -7,11 +7,11 @@ services:
     hostname: "localhost"
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://localhost'
+        external_url 'http://localhost:9999'
         gitlab_rails['gitlab_shell_ssh_port'] = 2224
     ports:
-      - '9999:80'
-      - '443:443'
+      - '9999:9999'
+      - '4443:443'
       - '2224:22'
     volumes:
       - type: volume
@@ -23,11 +23,29 @@ services:
       - type: volume
         source: gitlab-data
         target: /var/opt/gitlab
+    networks:
+      - gitlab-network
+
+  gitlab-runner:
+    image: 'gitlab/gitlab-runner:latest'
+    container_name: 'gitlab-runner'
+    restart: always
+    depends_on:
+      - gitlab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: volume
+        source: gitlab-runner-config
+        target: /etc/gitlab-runner
+    networks:
+      - gitlab-network
+
 volumes: 
   gitlab-config:
-    external: true
   gitlab-logs:
-    external: true
   gitlab-data:
-    external: true
-    
+  gitlab-runner-config:
+
+networks:
+  gitlab-network:
+    driver: bridge

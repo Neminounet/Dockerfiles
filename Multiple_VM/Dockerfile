@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 # Ajout de la clé publique pour l'accès SSH sans mot de passe
 RUN mkdir /root/.ssh
-COPY ./id_rsa.pub /root/.ssh/authorized_keys
+COPY ./vm_test_id_rsa.pub /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys && \
     chmod 700 /root/.ssh
 

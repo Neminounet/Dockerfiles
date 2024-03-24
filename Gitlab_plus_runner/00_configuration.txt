@@ -3,6 +3,7 @@
 => docker volume create gitlab-config 
 => docker volume create gitlab-logs 
 => docker volume create gitlab-data
+=> docker volume create gitlab-runner-config
 => cd Gitlab_plus_runner 
 => docker compose up --build
 => docker compose up -d --build (Utilisation en mode détaché)
@@ -26,3 +27,36 @@
 ======================
 ** Projects => Create a project
 ** Create blank project
+
+4. connecter Gitlab au runner :
+========================
+Dans Gitlab
+** Settings => CI/CD => Runners => Expand
+** New project runner => Linux 
+=> Tags : nsa 
+** Cocher Run untagged jobs
+** Create Runner 
+
+Dans Gitlab-runner 
+=> gitlab-runner register
+=> http://gitlab:9999 (Ici je mets le nom du container gitlab car sur le même réseau que le runner)
+=> je rentre le token
+=> je donne un nom au runner : nsa_runner
+=> Je choisis un executeur : docker 
+=> je choisis un type d'image par defaut : alpine 
+
+
+Seconde possibilité :  (ne pas oublier de remplacer le token)
+gitlab-runner register \
+  --non-interactive \
+  --executor docker \
+  --docker-image "alpine:latest" \
+  --url "http://gitlab:9999" \
+  --registration-token "glrt-q9sRGn-GHs4BaxWRCnQ7" \
+  --description "docker-runner" \
+  --tag-list "docker,alpine" \
+  --docker-network-mode "gitlab_plus_runner_gitlab-network" \
+  --clone_url "http://gitlab:9999"
+
+
+

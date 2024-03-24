@@ -13,6 +13,7 @@ services:
     hostname: vm1
     ports:
       - "2232:22"
+      - "8080:80"
   vm2: 
     build: 
       context: .
@@ -26,6 +27,8 @@ services:
     hostname: vm2
     ports:
       - "2233:22"
+      - "9090:9090"
+      - "3000:3000"
   vm3:
     build: 
       context: .
@@ -39,6 +42,7 @@ services:
     hostname: vm3
     ports:
       - "2234:22"
+      - "3333:3306"
 networks:
   multi_vm_net:
    
