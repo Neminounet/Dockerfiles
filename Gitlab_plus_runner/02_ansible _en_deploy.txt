@@ -1,0 +1,58 @@
+1. docker login :
+======================
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+2. Deployer ansible via docker hub :
+===================================
+deploy:
+  stage: deploy
+  image: neminounet/ansible:latest
+  script:
+    - ansible-playbook -i chemin/vers/hosts.ini chemin/vers/playbook.yml
+
+3. Utiliser la key privée rsa dans les variables gitlan DANS l'image  ansible :
+==============================================================
+deploy:
+  stage: deploy
+  image: "neminounet/ansible:latest"
+  script:
+    - |
+      mkdir -p ~/.ssh
+      echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+      ansible-playbook -i ansible/hosts.ini ansible/playbook.yml
+  only:
+    - main
+
+4. Idée d'utilisation des playbooks (Dans un dossier ansible / les playbooks et hosts.ini):
+==============================================================
+
+deploy:
+  stage: deploy
+  script:
+    - cd ansible
+    - ansible-playbook -i hosts.ini playbook1.yml
+    - ansible-playbook -i hosts.ini playbook2.yml
+    - ansible-playbook -i hosts.ini playbook3.yml
+    - ansible-playbook -i hosts.ini playbook4.yml
+  only:
+    - main
+
+==================================================
+deploy-job:
+  stage: deploy
+  image: neminounet/ansible:latest
+  script:
+    - |
+      mkdir -p ~/.ssh
+      echo "$SSH_PRIVATE_KEY_TEST_VM" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+      ansible-playbook -i ansible/hosts.ini ansible/test_playbook.yml
+  only:
+    - main
+
+
+

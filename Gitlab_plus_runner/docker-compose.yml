@@ -39,7 +39,7 @@ services:
         target: /etc/gitlab-runner
     networks:
       - gitlab-network
-
+      
 volumes: 
   gitlab-config:
     external: true

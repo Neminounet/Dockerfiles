@@ -1,0 +1,16 @@
+1. Login à docker hub :
+=======================
+=> docker login (si besoin : neminounet / comdhab)
+
+2. Créer un repository dans Docker hub :
+=====================================
+=> docker build -f Dockerfile.ansible -t neminounet/ansible .
+
+3. Push l'image ansible :
+=================================
+=> docker image push neminounet/ansible
+
+4. Pull l'image :
+===================
+=> docker image pull neminounet/ansible
+=> docker run neminounet/mynode

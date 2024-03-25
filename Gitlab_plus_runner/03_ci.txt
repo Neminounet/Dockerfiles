@@ -1,0 +1,19 @@
+services:
+  - docker:dind
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_HOST: "tcp://docker:2376"
+  DOCKER_DRIVER: overlay2
+  # Assurez-vous que la variable DOCKER_CERT_PATH n'est pas définie
+
+build_and_push:
+  stage: build
+  script:
+    - docker build -t mon_nom_utilisateur/my_app:latest .
+    - trivy image --severity HIGH,CRITICAL mon_nom_utilisateur/my_app:latest
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push mon_nom_utilisateur/my_app:latest
+  only:
+    - main
+
