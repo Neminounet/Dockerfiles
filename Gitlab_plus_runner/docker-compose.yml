@@ -32,6 +32,7 @@ services:
     restart: always
     depends_on:
       - gitlab
+    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - type: volume
@@ -39,7 +40,7 @@ services:
         target: /etc/gitlab-runner
     networks:
       - gitlab-network
-      
+
 volumes: 
   gitlab-config:
     external: true
