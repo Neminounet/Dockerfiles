@@ -1,0 +1,51 @@
+#version: "3.9"
+services:
+  prometheus:
+    image: bitnami/prometheus:latest
+    volumes:
+      #- type: bind
+      #  source: ./prometheus.yml
+      #  target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: prometheus-data
+        target: /prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - prometheus-grafana-network
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+      - type: bind
+        source: ./grafana/provisioning/datasources
+        target: /etc/grafana/provisioning/datasources
+      - type: bind
+        source: ./grafana/provisioning/dashboards
+        target: /etc/grafana/provisioning/dashboards
+      - type: bind
+        source: ./grafana/provisioning/dashboards/default.yaml
+        target: /etc/grafana/provisioning/dashboards/default.yaml
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${MDP}
+    networks:
+      - prometheus-grafana-network
+    restart: always
+
+volumes:
+  grafana-data:
+  prometheus-data:
+
+networks:
+  prometheus-grafana-network:
+    driver: bridge

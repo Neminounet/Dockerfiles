@@ -1,0 +1,35 @@
+Siege (pour stresser un serveur) :
+==================================
+https://linux.die.net/man/1/siege
+
+Prometheus :
+==============
+installation :
+***************
+sudo apt-get install prometheus
+
+Configuration :
+*****************
+/etc/prometheus/prometheus.yml
+
+Reload :
+********
+curl -X POST http://localhost:9090/-/reload
+
+Docker run :
+**********
+docker run --name prometheus -d -p 9090:9090 bitnami/prometheus:latest
+
+UI :
+****
+http://localhost:9090
+
+exemple de passage d'argument dans un docker compose :
+******************************************
+MDP=monMotDePasseFort docker compose up
+
+Grafana : 
+===========
+première utilisation : 
+User => admin 
+mdp => mdp docker-compose.yml
