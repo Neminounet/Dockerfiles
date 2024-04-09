@@ -1,0 +1,21 @@
+global:
+  resolve_timeout: 2m
+
+route:				
+  group_by: ['instance', 'severity']
+  repeat_interval: 5s	
+  receiver: 'email-me'
+  routes:
+  - match:
+      alertname: Trop_2_load
+
+receivers:
+- name: 'email-me'
+  email_configs:
+  - to: "yannick.tranouez@epitech.eu"
+    from: "projetnsa@outlook.com"
+    smarthost: "smtp-mail.outlook.com:587"
+    auth_username: "projetnsa@outlook.com"
+    auth_identity: "projetnsa@outlook.com"
+    auth_password: "Nsaproject800"
+    require_tls: true

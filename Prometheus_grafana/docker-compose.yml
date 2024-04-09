@@ -3,9 +3,12 @@ services:
   prometheus:
     image: bitnami/prometheus:latest
     volumes:
-      #- type: bind
-      #  source: ./prometheus.yml
-      #  target: /etc/prometheus/prometheus.yml
+      - type: bind
+        source: ./prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: bind
+        source: ./alerts.yml
+        target: /etc/prometheus/rules/alerts.yml
       - type: volume
         source: prometheus-data
         target: /prometheus
@@ -42,9 +45,48 @@ services:
       - prometheus-grafana-network
     restart: always
 
+  node-exporter:
+    image: bitnami/node-exporter:latest
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points'
+      - '^/(sys|proc|dev|host|etc)($|/)'
+      - '--collector.systemd'
+      - '--collector.processes'
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/:/rootfs:ro"
+    networks:
+      - prometheus-grafana-network
+    restart: always
+
+  alertmanager:
+    image: bitnami/alertmanager:latest
+    volumes:
+      - type: bind
+        source: ./alertmanager.yml
+        target: /opt/bitnami/alertmanager/conf/config.yml
+      - type: volume
+        source: alertmanager-data
+        target: /opt/bitnami/alertmanager/data
+    ports:
+      - "9093:9093"
+    command:
+      - '--config.file=/opt/bitnami/alertmanager/conf/config.yml'
+      - '--storage.path=/opt/bitnami/alertmanager/data'
+      - '--web.external-url=http://localhost:9093'
+    networks:
+      - prometheus-grafana-network
+    restart: always
+
 volumes:
   grafana-data:
   prometheus-data:
+  alertmanager-data:
 
 networks:
   prometheus-grafana-network:

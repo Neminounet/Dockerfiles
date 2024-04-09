@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s # Par défaut, scrape les targets toutes les 15 secondes.
+  evaluation_interval: 15s # Évalue les règles toutes les 15 secondes.
+
+rule_files:
+  - /etc/prometheus/rules/alerts.yml
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  - job_name: node
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 'alertmanager:9093'
