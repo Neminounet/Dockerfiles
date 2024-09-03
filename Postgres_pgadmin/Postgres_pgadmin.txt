@@ -1,0 +1,15 @@
+Si fichier : postgres.sql 
+*************************
+docker compose -f postgresql.yml up -d (le fichier est dans le dossier docker dans le projet tennis)
+
+docker compose -f postgresql.yml down -v (pour virer les volumes)
+docker compose -f postgresql.yml down (simple)
+
+Si fichier : docker-compose.yml
+**************************
+
+docker compose up -d 
+
+docker compose down -v 
+docker compose down 
+
