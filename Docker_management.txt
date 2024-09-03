@@ -1,0 +1,10 @@
+Mise à jour :
+*************
+
+docker --version 
+
+sudo apt update
+
+sudo apt install --only-upgrade docker-ce docker-ce-cli containerd.io
+
+sudo systemctl restart docker

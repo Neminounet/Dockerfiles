@@ -13,3 +13,8 @@ docker compose up -d
 docker compose down -v 
 docker compose down 
 
+Se connecter la à BDD : dans le container 
+
+docker exec -it bdd-postgres psql -U postgres
+
+
