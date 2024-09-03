@@ -13,8 +13,19 @@ docker compose up -d
 docker compose down -v 
 docker compose down 
 
-Se connecter la à BDD : dans le container 
-
+Se connecter la à BDD : dans le container :
+**********************************************
 docker exec -it bdd-postgres psql -U postgres
 
 
+Création d'un nouveau serveur : 
+Register=> server ...
+
+General => Name : nom_de_la_bdd 
+Connection => Host name/address : (de base) localhost / (dans le docker compose) bdd-postgres
+            => port 5432 
+            => Maintenace database : postgres 
+            => username : postgres 
+            => password : postgres 
+            => Save password ? yes 
+            => Save
