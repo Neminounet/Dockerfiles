@@ -24,6 +24,10 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8081:80"
+    volumes:
+      - type: volume
+        source: bdd_pgadmin_data
+        target: /var/lib/pgadmin
     depends_on:
       - bdd-postgresql
     networks:
@@ -31,6 +35,8 @@ services:
 
 volumes:
   bdd_postgres_data:
+    external: false
+  bdd_pgadmin_data:
     external: false
 
 networks:
