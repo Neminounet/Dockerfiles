@@ -17,6 +17,19 @@
 ** Dans navigateur => http://localhost:9999
 ** Nom d'utilisateur : root 
 ** Mot de passe : (password récupéré plus tôt) 
+
+** Si root et mdp ne fonctionnent pas : 
+docker exec -it gitlab bash
+gitlab-rails console
+(un peu long à se lancer, attendre)
+user = User.find_by(username: 'root')
+user.password = 'nouveau_mdp'
+user.password_confirmation = 'nouveau_mdp'
+user.save!
+
+Puis : 
+docker restart gitlab
+
 ** Préférences => password => current password (identique au précédent) => New password (votre mdp) + répétition
 ** Préférences => SSH Keys => Add new Key
 => cd ~/.ssh 
