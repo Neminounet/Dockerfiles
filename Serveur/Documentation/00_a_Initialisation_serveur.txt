@@ -1,0 +1,76 @@
+1. Installation d'OpenSSH Server :
+==================================
+sudo apt update
+sudo apt install openssh-server
+
+2. Vérification du statut de ssh : 
+==================================
+sudo systemctl status ssh
+
+Si désactivé : 
+sudo systemctl enable ssh (disable pour désactiver)
+
+3. Configuration du pare-feu : 
+==================================
+sudo apt install ufw
+sudo ufw allow ssh
+sudo ufw enable
+sudo ufw status
+
+4. Trouver l'adresse ip du serveur : 
+==================================
+ip addr show
+
+5. Se connecter avec mon pc au serveur :
+==================================
+ssh gerardinho@192.168.1.142 (adresse locale)
+
+6. Installer docker et docker compose, voir le fichier dédié.
+==================================
+
+7. Modifier le fichier de configuration : 
+==================================
+Pour info je suis en Wifi donc : wlp3s0 mais ça pourrait être autre chose voir étape 4.
+=================================
+
+sudo nano /etc/netplan/50-cloud-init.yaml
+
+8. avec ceci :
+network:
+  ethernets: {}
+  version: 2
+  renderer: networkd
+  wifis:
+    wlp3s0:
+      dhcp4: no
+      addresses:
+        - 192.168.1.142/24
+      routes:
+        - to: default
+          via: 192.168.1.254
+      nameservers:
+        addresses: [8.8.8.8, 1.1.1.1]
+      access-points:
+        Freebox-3112FE:
+          password: *****
+
+
+9. appliquer :
+==================== 
+sudo netplan apply
+
+
+10. Vérifier que l'adresse ip est bien attribuée :
+==============================
+ip addr show wlp3s0
+
+11. tests :
+===========================
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+ping -c 4 192.168.1.254 (passerelle freebox)
+
+12. en Cas d'erreur : 
+======================
+ip route
+arp -a

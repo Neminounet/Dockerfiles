@@ -1,0 +1,66 @@
+version: "3.8"
+services:
+  gitlab:
+    image: "gitlab/gitlab-ce:latest"
+    container_name: "gitlab"
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://freedude.freeboxos.fr/gitlab'
+        gitlab_rails['gitlab_relative_url'] = "/gitlab"
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+        gitlab_rails['gitlab_ssh_port'] = 2224
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitlab.rule=Host(`freedude.freeboxos.fr`) && PathPrefix(`/gitlab`)"
+      - "traefik.http.routers.gitlab.entrypoints=websecure"
+      - "traefik.http.routers.gitlab.tls.certresolver=myresolver"
+      - "traefik.http.services.gitlab.loadbalancer.passhostheader=true"
+      - "traefik.http.services.gitlab.loadbalancer.server.port=80"
+    ports:
+      - "2224:22"
+    expose:
+      - "80"
+    volumes:
+      - type: volume
+        source: gitlab-config
+        target: /etc/gitlab
+      - type: volume
+        source: gitlab-logs
+        target: /var/log/gitlab
+      - type: volume
+        source: gitlab-data
+        target: /var/opt/gitlab
+    networks:
+      - gerardinho-network
+
+  gitlab-runner:
+    image: "gitlab/gitlab-runner:latest"
+    container_name: "gitlab-runner"
+    restart: always
+    depends_on:
+      - gitlab
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: volume
+        source: gitlab-runner-config
+        target: /etc/gitlab-runner
+    networks:
+      - gerardinho-network
+
+volumes:
+  gitlab-config:
+    external: true
+  gitlab-logs:
+    external: true
+  gitlab-data:
+    external: true
+  gitlab-runner-config:
+    external: true
+
+networks:
+  gerardinho-network:
+    external: true

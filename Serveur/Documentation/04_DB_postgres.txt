@@ -1,0 +1,19 @@
+Accéder à PGAdmin avec les identifiants du fichier .env.
+
+Ajouter le serveur PostgreSQL :
+General:
+Name: PostgreSQL
+Connection:
+Host name/address: postgres
+Port: 5432
+Username: neminounet
+Password: motdepasse
+
+Ajouter le serveur TimescaleDB :
+General:
+Name: TimescaleDB
+Connection:
+Host name/address: timescaledb
+Port: 5432
+Username: neminounet
+Password: motdepasse

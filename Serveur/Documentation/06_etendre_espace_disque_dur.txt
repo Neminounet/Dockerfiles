@@ -1,0 +1,97 @@
+Etendre L'espace exploitable sur le Nvme :
+===========================================
+
+Connaître l'espace disponible et utilisé sur la partition : 
+---------------------------------------------------------------
+df -h 
+
+Connaître la structure et la répartition des partitions : 
+---------------------------------------------------------------
+lsblk -f
+
+Vérifier la table de partition : 
+---------------------------------------------------------------
+sudo fdisk -l
+
+
+Vérifier que la partition LVM occupe bien tout l'espace :
+---------------------------------------------------------------
+sudo pvdisplay
+sudo vgdisplay 
+
+Etendre le LV (Logical Volume) à tout l'espace libre du VG (Volume Group) :
+---------------------------------------------------------------
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+
+Ajuster la taille du système de fichiers (ext4) pour utiliser le nouveau volume :
+---------------------------------------------------------------
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+
+Revérifier :
+---------------------------------------------------------------
+df -h
+
+
+Rajouter le disque dur HDD pour le stockage :
+==============================================
+
+Ouvrir Parted sur le disque dur /dev/sda : 
+---------------------------------------------
+sudo parted /dev/sda 
+
+Afficher la table de partions : 
+---------------------------------------------
+print
+
+Supprimer la partition N°1 :
+---------------------------------------------
+rm 1
+
+Créer une nouvelle partition (primary) qui occupe tout le disque (0 à 100%)
+--------------------------------------------
+mkpart primary 0% 100%
+
+Activer le flag lvm : 
+--------------------------------------------
+set 1 lvm on
+
+Initialiser la partition LVM :
+--------------------------------------------
+sudo pvcreate /dev/sda1
+
+Ajouter ce PV au volume group  ubuntu-vg :
+--------------------------------------------
+sudo vgextend ubuntu-vg /dev/sda1
+
+Vérifier :
+--------------------------------------------
+sudo pvdisplay 
+sudo vgdisplay 
+
+Créer un LV dans le disque dur (on l'appelle data-lv): 
+--------------------------------------------
+sudo lvcreate -n data-lv -l +100%FREE ubuntu-vg
+
+Ensuite :
+--------------------------------------------
+# Formater en ext4
+sudo mkfs.ext4 /dev/ubuntu-vg/data-lv
+
+# Créer un point de montage
+sudo mkdir /data
+
+# Monter le LV
+sudo mount /dev/ubuntu-vg/data-lv /data
+
+Pour qu'il soit monté automatiquement au démarrage : 
+--------------------------------------------
+sudo nano /etc/fstab
+et on ajoute : 
+---------------
+/dev/ubuntu-vg/data-lv   /data   ext4   defaults   0   2
+
+
+Vérifier :
+--------------
+sudo mount -a
+df -h | grep data

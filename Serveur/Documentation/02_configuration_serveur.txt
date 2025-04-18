@@ -1,0 +1,118 @@
+* Commandes utiles :
+**********************
+shutdown => Couper pc 
+reboot => redemarre pc
+
+** Liens utiles : 
+**********************
+http://mafreebox.freebox.fr/ (la box, donc forcément en local)
+https://subscribe.free.fr/login/ (l'abonnement pour l'ip fullstack etc...)
+https://www.whatismyip.com/     (pour choper notre ip publique)
+
+*** Etapes nécessaires : 
+**********************
+1. Demander une adresse ip fixe v4 Fullstack (Ma freebox / Fonctionnalité avancées)
+Permet d'en avoir une statique et d'avoir tous les ports disponibles.
+82.67.90.179 
+
+2. DNS :
+Paramètre de la freebox / Nom de domaine ==> Prendre un nom de domaine : freedude.freeboxos.fr
+
+CONFIGURATION : 
+****************
+
+0. Se connecter à gerardinho :
+================================
+Interne :
+*********
+ssh -p 2222 gerardinho@192.168.1.142
+Externe :
+*********
+ssh -p 2222 gerardinho@freedude.freeboxos.fr
+ssh -p 2222 gerardinho@82.67.90.179
+
+1. Créer les volumes pour Gitlab :
+====================================
+docker volume create gitlab-config 
+docker volume create gitlab-logs 
+docker volume create gitlab-data
+docker volume create gitlab-runner-config
+
+1.1 Créer les volumes pour Postgres, TimeScaleDB et PgAdmin :
+====================================
+docker volume create postgres_data
+docker volume create timescaledb_data
+docker volume create pgadmin_data
+
+1.2 Créer le volumes pour mongoDB :
+====================================
+docker volume create mongo_data
+
+1.3 Créer les volumes pour RabbitMQ :
+====================================
+docker volume create rabbitmq_data
+docker volume create rabbitmq_log
+
+2. Créer le network pour le serveur : 
+====================================
+docker network create gerardinho-network
+
+3. Ouverture des ports :
+===================================
+* Il faut ouvrir les ports sur le serveur (UFW) et sur la freebox (http://mafreebox.freebox.fr/)
+** Par exemple ouverture du port 5432 pour Postgres : 
+*** Mais pareil pour les ports 80 (HTTP), 443 (HTTPS), 2222 (SSH Custom / sinon 22)
+
+Serveur :
+**********
+sudo ufw allow 5432/tcp 
+sudo ufw status (pour vérifier)
+
+Freebox : 
+**********
+http://mafreebox.freebox.fr/ 
+paramètres Box 
+Mode avancé 
+Gestion des ports 
+
+Port 5432 :
+IP destination : 192.168.1.142 (adresse IP de votre serveur)
+Redirection active : coché 
+IP source : Toutes
+Protocole : TCP
+Port externe (début et fin) : 5432
+Port interne : 5432
+Commentaire : Postgres
+
+4.0 Copier Traefik sur gerardinho (scp Secure Copy): 
+====================================
+En interne : 
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Traefik gerardinho@192.168.1.142:/home/gerardinho/Documents/Dockerfiles/
+En externe :
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Traefik gerardinho@freedude.freeboxos.fr:/home/gerardinho/Documents/Dockerfiles/
+
+4.1 Copier gitlab sur gerardinho :
+===================================
+En interne : 
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Gitlab gerardinho@192.168.1.142:/home/gerardinho/Documents/Dockerfiles/
+En externe :
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Gitlab gerardinho@freedude.freeboxos.fr:/home/gerardinho/Documents/Dockerfiles/
+
+4.2 Copier postgres sur gerardinho :
+===================================
+En interne : 
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Postgres gerardinho@192.168.1.142:/home/gerardinho/Documents/Dockerfiles/
+En externe :
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Postgres gerardinho@freedude.freeboxos.fr:/home/gerardinho/Documents/Dockerfiles/
+
+4.3 Copier tdat901 sur gerardinho :
+===================================
+En externe :
+scp -P 2222 -r /home/neminounet/Documents/Epitech/T-DAT-901/Gerardinho/T-DAT-901-NCE_1 gerardinho@freedude.freeboxos.fr:/home/gerardinho/Documents/Epitech/
+cloner avec ssh (Exemple): 
+================
+git clone ssh://git@freedude.freeboxos.fr:2224/neminounet/projet_test.git
+
+
+
+

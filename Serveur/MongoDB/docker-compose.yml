@@ -1,0 +1,46 @@
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb-container
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+    volumes:
+      - type: volume
+        source: mongo_data
+        target: /data/db
+    networks:
+      - gerardinho-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USER}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT_USER}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
+      - ME_CONFIG_SITE_BASEURL=/mongo
+    networks:
+      - gerardinho-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo.rule=Host(`freedude.freeboxos.fr`) && PathPrefix(`/mongo`)"
+      - "traefik.http.routers.mongo.entrypoints=websecure"
+      - "traefik.http.routers.mongo.tls.certresolver=myresolver"
+      - "traefik.http.services.mongo.loadbalancer.server.port=8081"
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:
+    external: true
+
+networks:
+  gerardinho-network:
+    external: true

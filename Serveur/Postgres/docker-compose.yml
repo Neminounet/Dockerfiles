@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+    networks:
+      - gerardinho-network
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: timescaledb
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_TSDB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TSDB}
+    # ports:
+    #   - "5433:5432"
+    volumes:
+      - type: volume
+        source: timescaledb_data
+        target: /var/lib/postgresql/data
+    networks:
+      - gerardinho-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      SCRIPT_NAME: /pgadmin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`freedude.freeboxos.fr`) && PathPrefix(`/pgadmin`)"
+      - "traefik.http.routers.pgadmin.entrypoints=websecure"
+      - "traefik.http.routers.pgadmin.tls.certresolver=myresolver"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+    volumes:
+      - type: volume
+        source: pgadmin_data
+        target: /var/lib/pgadmin
+    networks:
+      - gerardinho-network
+
+volumes:
+  postgres_data:
+    external: true
+  pgadmin_data:
+    external: true
+  timescaledb_data:
+    external: true
+
+networks:
+  gerardinho-network:
+    external: true

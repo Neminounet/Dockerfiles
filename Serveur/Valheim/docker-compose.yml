@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  valheim:
+    image: lloesche/valheim-server
+    container_name: valheim
+    restart: always
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+      - WORLD_NAME=${WORLD_NAME}
+      - SERVER_PASS=${SERVER_PASSWORD}
+      - SERVER_PUBLIC=true
+    ports:
+      - "2456-2458:2456-2458/udp"
+    volumes:
+      - valheim_data:/config
+    networks:
+      - gerardinho-network
+
+volumes:
+  valheim_data:
+    external: true
+
+networks:
+  gerardinho-network:
+    external: true

@@ -1,0 +1,13 @@
+gitlab-runner register \
+  --non-interactive \
+  --executor docker \
+  --docker-image "alpine:latest" \
+  --url "https://freedude.freeboxos.fr/gitlab/" \
+  --registration-token "glrt-t3_sZ-syMEvDeXREaz8Gr-z" \
+  --description "docker-runner" \
+  --tag-list "docker,alpine" \
+  --docker-privileged \
+  --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" \
+  --docker-volumes "/cache" \
+  --docker-network-mode "gerardinho-network" \
+  --clone-url "https://freedude.freeboxos.fr/gitlab/" \

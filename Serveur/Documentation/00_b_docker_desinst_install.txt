@@ -1,0 +1,88 @@
+Désinstallation Docker complète : 
+********************************
+sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli containerd runc
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce
+
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+sudo rm -rf /etc/docker
+sudo rm -rf ~/.docker
+sudo rm /etc/systemd/system/docker.service
+sudo rm /etc/systemd/system/docker.socket
+
+sudo systemctl daemon-reload
+
+sudo groupdel docker
+
+
+
+Désinstallation docker compose : 
+***********************************
+
+sudo apt-get purge -y docker-compose
+
+sudo rm -rf ~/.docker/compose
+
+Réinstallation :
+*********************
+Mettre à jour la liste des paquets existants :
+============================
+sudo apt-get update
+
+Installer les paquets nécessaires pour utiliser le dépôt Docker sur HTTPS:
+================================================================
+
+sudo apt-get install -y \
+    ca-certificates \
+    curl \
+    gnupg
+
+
+Ajouter la clé GPG officielle de Docker :
+============================================
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+Ajouter le dépôt Docker aux sources APT:
+========================================
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+Mettre à jour la liste des paquets avec le nouveau dépôt Docker:
+=================================================
+sudo apt-get update
+
+Installer Docker Engine, Docker CLI, Containerd et Docker Compose Plugin :
+=====================================================
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+Vérifier l'installation de Docker Engine (doit être active running):
+========================================
+sudo systemctl status docker
+
+Configurer les permissions pour exécuter Docker sans sudo (facultatif) :
+=================================================
+sudo usermod -aG docker $USER
+
+(Redémarrer la session pour que les modifications soient prises en charge :D)
+
+Tester : 
+***********
+docker compose version
+docker version
+
+sudo apt-get update
+sudo apt-get upgrade -y
+
+
+

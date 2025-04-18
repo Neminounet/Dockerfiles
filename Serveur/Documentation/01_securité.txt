@@ -1,0 +1,50 @@
+Gérer la sécurité
+=====================
+
+1. Sécurité SSH 
+=====================
+Par défaut le ssh communique via port 22
+Changer ce port pour détourner les attaquants
+- sudo nano /etc/ssh/sshd_config
+
+Supprime le # devant port et change le numéro de port 
+- Port 2222
+
+Redemarrer le service SSH 
+- sudo systemctl restart ssh
+
+Mettre à jour le pare-feu ufw 
+- sudo ufw allow 2222/tcp
+- sudo ufw delete allow ssh
+(exemple pour supprimer => sudo ufw delete allow 8081/tcp)
+
+2. Communiquer par clé ssh (plus de mot de passe)
+========================
+Créer une clé ssh sur le pc concerné (neminounet par exemple) si pas déjà fait :
+- ssh-keygen -t rsa -b 4096
+Copier la clé veers le serveur (gerardinho)
+- ssh-copy-id -p 2222 gerardinho@192.168.1.142
+Faire un test 
+- ssh -p 2222 gerardinho@192.168.1.142
+
+3. Supprimer l'autentification par password et empecher la connexion directe en tant que root : 
+========================
+- sudo nano /etc/ssh/sshd_config
+- PasswordAuthentication no
+- PermitRootLogin no
+Redemarrer : 
+sudo systemctl restart ssh
+
+4. Activer les ports que l'on souhaite ouvrir :
+=========================
+sudo ufw allow 2222/tcp    # Port SSH personnalisé
+sudo ufw allow 80/tcp      # HTTP (si nécessaire)
+sudo ufw allow 443/tcp     # HTTPS (si nécessaire)
+sudo ufw enable
+sudo ufw status
+
+5. Installer Fail2Ban (surveille les tentatives de connexions infructueuses et bannit auto les adresse ip suspectes )
+=========================
+- sudo apt install fail2ban
+
+

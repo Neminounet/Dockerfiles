@@ -1,0 +1,3 @@
+le Dossier => conf et la configuration, permet d'afficher les ressources pour Traefik.
+Sans ça, https://freedude.freeboxos.fr/rabbitmq  n'affiche pas la page 
+Donc conf est bind mounted 

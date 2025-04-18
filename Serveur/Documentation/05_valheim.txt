@@ -1,0 +1,20 @@
+sudo ufw allow 2456:2458/udp
+
+3.4 Configurer la redirection de port sur votre Freebox
+Dans l'interface de votre Freebox, redirigez les ports 2456 à 2458 en UDP vers l'adresse IP locale de votre serveur.
+
+Ports externes : 2456-2458 UDP
+IP de destination : 192.168.1.142
+protocole : UDP 
+port debut : 2456
+port fin : 2458 
+port de destination : 2456 
+
+Copier le docker compose : 
+============================
+scp -P 2222 -r /home/neminounet/Documents/Dockerfiles/Serveur/Valheim gerardinho@freedude.freeboxos.fr:/home/gerardinho/Documents/Dockerfiles/
+
+Mettre à jour avec l'image la plus récente : 
+============================
+docker-compose pull
+docker-compose up -d

@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432" # le premier port est celui de l'hôte, le deuxième est celui du conteneur
     volumes:
       - type: volume
         source: bdd_postgres_data
