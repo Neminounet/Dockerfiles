@@ -38,8 +38,8 @@ services:
     depends_on:
       - gitlab
     privileged: true
-    # ❌ PLUS de /var/run/docker.sock !
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - gitlab-runner-config:/etc/gitlab-runner
       - gitlab-runner-certs:/certs/client # recommandé par la doc
       - gitlab-runner-cache:/cache
@@ -50,9 +50,9 @@ volumes:
   gitlab-config: { external: true }
   gitlab-logs: { external: true }
   gitlab-data: { external: true }
-  gitlab-runner-config:
-  gitlab-runner-certs:
-  gitlab-runner-cache:
+  gitlab-runner-config: { external: true }
+  gitlab-runner-certs: { external: true }
+  gitlab-runner-cache: { external: true }
 
 networks:
   gerardinho-network: { external: true }

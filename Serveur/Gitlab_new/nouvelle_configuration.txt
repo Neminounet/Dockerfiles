@@ -6,6 +6,18 @@
 [1]: https://docs.gitlab.com/ci/docker/using_docker_build/ "Use Docker to build Docker images | GitLab Docs"
 
 
+Créer un trigger CI et push sans changer code :
+================================================
+git commit --allow-empty -m "trigger CI"
+git push
+
+
+Créer les volumes si inexistants :
+==================================
+docker volume create gitlab-runner-config
+docker volume create gitlab-runner-certs 
+docker volume create gitlab-runner-cache
+
 
 ENREGISTREMENT DU RUNNER : 
 ============================
@@ -14,23 +26,16 @@ ENREGISTREMENT DU RUNNER :
 gitlab-runner register \
   --non-interactive \
   --url "https://freedude.freeboxos.fr/gitlab/" \
-  --registration-token "glrt-xxxxxxxxxxxx" \      # ← garde ton vrai token
-  --executor "docker" \
+  --registration-token "GLRT-xxxxx" \
   --description "docker-runner" \
-  --tag-list "docker" \
-  --clone-url "https://freedude.freeboxos.fr/gitlab/" \
-  \
-  # → image par défaut pour les jobs (on la fixe à Docker 24)
+  --executor "docker" \
   --docker-image "docker:24.0.5" \
   --docker-privileged \
-  \
-  # → volumes _inter-containers_ recommandés : cache + certs DinD
   --docker-volumes "/cache" \
   --docker-volumes "/certs/client" \
-  \
-  # → même réseau que GitLab (si tu en as besoin)
-  --docker-network-mode "gerardinho-network"
-
+  --docker-network-mode "gerardinho-network" \
+  --tag-list "docker" \
+  --run-untagged "true"
 
 
 MODIFICATION EVENTUELLES :
@@ -40,6 +45,8 @@ Configuration du .toml du runner =>
  /etc/gitlab-runner/config.toml 
 ==========================
 ** Installer nano avant => apt-get update && apt-get install -y nano
+ou 
+apk add --no-cache nano
 
 et modifier :
 image = "docker:24.0.5"
