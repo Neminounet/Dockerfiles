@@ -70,8 +70,10 @@ gitlab-runner register \
 
 
 
-Configuration du .toml 
+Configuration du .toml  /etc/gitlab-runner/config.toml 
 ==========================
+** Installer nano avant => apt-get update && apt-get install -y nano
+
 concurrent = 1
 check_interval = 0
 connection_max_age = "15m0s"

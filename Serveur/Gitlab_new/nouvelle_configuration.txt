@@ -1,0 +1,83 @@
+| Problème potentiel aujourd’hui                           | Pourquoi ça peut casser demain                                                                                                                                                                                                                             |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tags `latest`** sur GitLab CE et le runner             | Une mise à jour non anticipée peut introduire une rupture de compatibilité entre GitLab et le runner, ou entre le runner et ton `config.toml` ([GitLab Docs][1])                                                                                           |
+| **Bind-mount du socket Docker** (`/var/run/docker.sock`) | Ce mode « socket-binding » entre en conflit avec le service `docker:dind`, génère l’erreur de *socket busy* que tu as vue, et n’est plus recommandé ; la doc privilégie **DinD + volumes `/certs/client` / `/cache`** ([GitLab Docs][1], [GitLab Docs][1]) |
+
+[1]: https://docs.gitlab.com/ci/docker/using_docker_build/ "Use Docker to build Docker images | GitLab Docs"
+
+
+
+ENREGISTREMENT DU RUNNER : 
+============================
+=> docker exec -it gitlab-runner bash
+=> 
+gitlab-runner register \
+  --non-interactive \
+  --url "https://freedude.freeboxos.fr/gitlab/" \
+  --registration-token "glrt-xxxxxxxxxxxx" \      # ← garde ton vrai token
+  --executor "docker" \
+  --description "docker-runner" \
+  --tag-list "docker" \
+  --clone-url "https://freedude.freeboxos.fr/gitlab/" \
+  \
+  # → image par défaut pour les jobs (on la fixe à Docker 24)
+  --docker-image "docker:24.0.5" \
+  --docker-privileged \
+  \
+  # → volumes _inter-containers_ recommandés : cache + certs DinD
+  --docker-volumes "/cache" \
+  --docker-volumes "/certs/client" \
+  \
+  # → même réseau que GitLab (si tu en as besoin)
+  --docker-network-mode "gerardinho-network"
+
+
+
+MODIFICATION EVENTUELLES :
+=============================
+
+Configuration du .toml du runner => 
+ /etc/gitlab-runner/config.toml 
+==========================
+** Installer nano avant => apt-get update && apt-get install -y nano
+
+et modifier :
+image = "docker:24.0.5"
+volumes = ["/cache", "/certs/client"]
+
+
+Au final :
+concurrent = 1
+check_interval = 0
+connection_max_age = "15m0s"
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "docker-runner"
+  url = "https://freedude.freeboxos.fr/gitlab/"
+  id = 1
+  token = "glrt-t3_sZ-syMEvDeXREaz8Gr-z"
+  token_obtained_at = 2024-11-28T15:53:02Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker"
+  clone_url = "https://freedude.freeboxos.fr/gitlab/"
+  [runners.custom_build_dir]
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+  [runners.docker]
+    tls_verify = false
+    image = "docker:24.0.5"
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/cache", "/certs/client"]
+    network_mode = "gerardinho-network"
+    shm_size = 0
+    network_mtu = 0
